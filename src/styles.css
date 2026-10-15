@@ -1,0 +1,146 @@
+@import "tailwindcss";
+@import "@cloudflare/kumo/styles/tailwind";
+@source "../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}";
+@source "../node_modules/streamdown/dist/*.js";
+@source "../node_modules/@streamdown/code/dist/*.js";
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+/* ── Dashboard chart & map tokens (dataviz reference palette) ────────────── */
+.viz-root {
+  --surface-1: #fcfcfb;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #6250d6;
+  --emphasis-off: #c3c2b7;
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+  --status-critical: #d03b3b;
+  --delta-good: #006300;
+  --hub: #52514e;
+}
+:root[data-mode="dark"] .viz-root {
+  --surface-1: #1a1a19;
+  --text-primary: #f0efec;
+  --text-secondary: #c3c2b7;
+  --text-muted: #898781;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --emphasis-off: #4a4a46;
+  --delta-good: #0ca30c;
+  --hub: #c3c2b7;
+}
+
+.viz-card {
+  background: var(--surface-1);
+  color: var(--text-primary);
+  border: 1px solid rgba(11, 11, 11, 0.1);
+  border-radius: 12px;
+}
+:root[data-mode="dark"] .viz-card {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Map: live open exceptions pulse; Leaflet chrome follows the theme. */
+@keyframes viz-pulse {
+  0% {
+    stroke-opacity: 0.9;
+    stroke-width: 2px;
+  }
+  70% {
+    stroke-opacity: 0;
+    stroke-width: 10px;
+  }
+  100% {
+    stroke-opacity: 0;
+    stroke-width: 10px;
+  }
+}
+.viz-pulse {
+  animation: viz-pulse 1.8s ease-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .viz-pulse {
+    animation: none;
+    stroke-opacity: 0.9;
+  }
+}
+.viz-hub {
+  width: 10px;
+  height: 10px;
+  background: var(--hub);
+  border: 2px solid var(--surface-1);
+  border-radius: 2px;
+}
+.leaflet-container {
+  background: var(--surface-1);
+  font: inherit;
+}
+.leaflet-tooltip.viz-tip {
+  background: var(--surface-1);
+  color: var(--text-primary);
+  border: 1px solid var(--grid);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  padding: 6px 8px;
+  font-size: 12px;
+}
+.leaflet-tooltip.viz-label {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 600;
+  text-shadow:
+    0 0 3px var(--surface-1),
+    0 0 3px var(--surface-1);
+  padding: 0;
+}
+.leaflet-tooltip.viz-label::before {
+  display: none;
+}
+
+/* Warehouses on the map: diamond, filled = owned, outlined = partner; border = stock status. */
+.viz-wh {
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  border: 2.5px solid var(--wh-status, var(--text-secondary));
+  border-radius: 2px;
+  box-shadow: 0 0 0 1.5px var(--surface-1);
+}
+.viz-wh.owned {
+  background: var(--text-primary);
+}
+.viz-wh.partner {
+  background: var(--surface-1);
+}
+.viz-wh.selected {
+  box-shadow:
+    0 0 0 1.5px var(--surface-1),
+    0 0 0 4px var(--text-primary);
+}

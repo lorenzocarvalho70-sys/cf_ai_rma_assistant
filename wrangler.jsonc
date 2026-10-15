@@ -1,0 +1,37 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cf-ai-rma-assistant",
+  "main": "src/server.ts",
+  "compatibility_date": "2026-06-11",
+  "compatibility_flags": ["nodejs_compat"],
+  "ai": { "binding": "AI", "remote": true },
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/agents/*", "/oauth/*", "/api/*"]
+  },
+  // Length of one spec "hour" in seconds. 15 runs the whole lifecycle in
+  // minutes for demos (12h code lead = 3 min, 24h SLA = 6 min); use 3600 in production.
+  "vars": { "HOUR_SECONDS": "15" },
+  "workflows": [
+    {
+      "name": "delivery-workflow",
+      "binding": "DELIVERY_WORKFLOW",
+      "class_name": "DeliveryWorkflow"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "class_name": "ChatAgent",
+        "name": "ChatAgent"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "new_sqlite_classes": ["ChatAgent"],
+      "tag": "v1"
+    }
+  ]
+}
